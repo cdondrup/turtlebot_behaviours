@@ -1,0 +1,13 @@
+pose: !!python/object/new:geometry_msgs.msg._Pose.Pose
+  state:
+  - !!python/object/new:geometry_msgs.msg._Point.Point
+    state:
+    - -4.560532651032467
+    - 3.047141812577353
+    - 0.0
+  - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+    state:
+    - 0.0
+    - 0.0
+    - -0.5819135796911706
+    - 0.8132506291242618
