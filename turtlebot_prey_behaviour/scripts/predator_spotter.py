@@ -39,6 +39,8 @@ class PredatorSpotter(object):
         except CvBridgeError, e:
             print e
 
+
+
         hsv_img = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
 
         if self.simulator:
@@ -55,14 +57,14 @@ class PredatorSpotter(object):
         )
 
         size = np.sum(hsv_thresh/255.0)
-        print size
+        #print size
         contours, hier = cv2.findContours(hsv_thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
             if 1000<cv2.contourArea(cnt):
                 cv2.drawContours(cv_image,[cnt],0,(0,0,255),2)
                 x,y,w,h = cv2.boundingRect(cnt)
                 aspect_ratio = float(w)/h
-                print aspect_ratio
+                #print aspect_ratio
                 if aspect_ratio > 1.5 and cv2.contourArea(cnt) > 2000:
                     self.pub.publish(True)
                     print "RUN FORSET RUN!"
@@ -72,6 +74,6 @@ class PredatorSpotter(object):
 
 
 if __name__ == '__main__':
-    rospy.init_node('prey_state_machine')
+    rospy.init_node('predator_spotter')
     p = PredatorSpotter(rospy.get_name())
     rospy.spin()
