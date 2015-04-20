@@ -34,7 +34,7 @@ class StateMachine(object):
             rospy.loginfo("The games are over. This counts!")
 
         rospy.loginfo("Waiting for move_base client ...")
-        client = actionlib.SimpleActionClient("/turtlebot_2/move_base", MoveBaseAction)
+        client = actionlib.SimpleActionClient("/turtlebot_2/move_base" if self.simulator else "/move_base", MoveBaseAction)
         client.wait_for_server()
         rospy.loginfo(" ... done")
 

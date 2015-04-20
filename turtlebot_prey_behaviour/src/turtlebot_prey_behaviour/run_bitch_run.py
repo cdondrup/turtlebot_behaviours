@@ -24,7 +24,7 @@ class RunBitchRun(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo("DANGER WILL ROBINSON! DANGER!")
-        end = rospy.Time.now().to_sec() + 2.0
+        end = rospy.Time.now().to_sec() + 3.0
         while end > rospy.Time.now().to_sec() and not self.run_bitch and not self.preempt_requested() and not rospy.is_shutdown():
             turn = Twist()
             turn.linear.x = 0.
@@ -39,7 +39,7 @@ class RunBitchRun(smach.State):
             rospy.sleep(0.1)
             self.pub.publish(run)
 
-        end = rospy.Time.now().to_sec() + 2.0
+        end = rospy.Time.now().to_sec() + 3.0
         speed = pi/4 * choice([-1,1])
         while end > rospy.Time.now().to_sec() and not self.run_bitch and not self.preempt_requested() and not rospy.is_shutdown():
             turn = Twist()

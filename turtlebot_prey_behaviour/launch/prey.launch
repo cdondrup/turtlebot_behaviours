@@ -1,7 +1,8 @@
 <launch>
   <arg name="simulator" default="true"/>
   <arg name="visualise" default="true"/>
-  <arg name="waypoint_dir" default="$(find turtlebot_prey_behaviour)/waypoints/simulator/"/>
+  <arg name="waypoint_dir" default="$(find turtlebot_prey_behaviour)/waypoints/simulator/" if="$(arg simulator)"/>
+  <arg name="waypoint_dir" default="$(find turtlebot_prey_behaviour)/waypoints/labc/" unless="$(arg simulator)"/>
   
   <node pkg="turtlebot_prey_behaviour" type="predator_spotter.py" name="predator_spotter" output="screen" respawn="true">
     <param name="simulator" type="bool" value="$(arg simulator)"/>
