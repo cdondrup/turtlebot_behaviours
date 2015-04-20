@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   smach
   smach_ros
   std_msgs
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -48,6 +49,10 @@ catkin_python_setup()
 ##     and list every .msg/.srv/.action file to be processed
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
+
+generate_dynamic_reconfigure_options(
+  cfg/Spotter.cfg
+)
 
 ## Generate messages in the 'msg' folder
 # add_message_files(

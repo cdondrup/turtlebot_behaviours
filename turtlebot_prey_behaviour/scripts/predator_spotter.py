@@ -6,6 +6,8 @@ import numpy as np
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import Bool
+from dynamic_reconfigure.server import Server as DynServer
+from turtlebot_prey_behaviour.cfg import SpotterConfig
 
 
 class PredatorSpotter(object):
@@ -21,6 +23,7 @@ class PredatorSpotter(object):
         if self.visualise:
             cv2.namedWindow("Image window", 1)
             cv2.startWindowThread()
+        self.dyn_srv = DynServer(SpotterConfig, self.dyn_callback)
         self.bridge = CvBridge()
         self.pub = rospy.Publisher("/predator_spotter/spotted", Bool, queue_size=10)
         rospy.Subscriber(
@@ -31,6 +34,13 @@ class PredatorSpotter(object):
             self.callback,
             queue_size=1
         )
+        
+    def dyn_callback(self, config, level):
+        self.hue_low       = config["hue_low"]
+        self.hue_high       = config["hue_high"]
+        self.value_low       = config["value_low"]
+        self.value_high       = config["value_high"]
+        return config
 
 
     def callback(self, msg):
@@ -47,8 +57,8 @@ class PredatorSpotter(object):
             low = np.array((60, 120 , 0))
             up = np.array((110, 255, 255))
         else:
-            low = np.array((51, 51 , 0))
-            up = np.array((102, 127, 255))
+            low = np.array((self.hue_low, self.value_low , 0))
+            up = np.array((self.hue_high, self.value_high, 255))
 
         hsv_thresh = cv2.inRange(
             hsv_img,
@@ -56,9 +66,14 @@ class PredatorSpotter(object):
             up
         )
 
-        size = np.sum(hsv_thresh/255.0)
+        kernel = np.ones((3,3),np.uint8)
+        thresh = cv2.medianBlur(hsv_thresh,5)
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+        kernel = np.ones((10,10),np.uint8)
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_DILATE, kernel)
         #print size
-        contours, hier = cv2.findContours(hsv_thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        contours, hier = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
             if 1000<cv2.contourArea(cnt):
                 cv2.drawContours(cv_image,[cnt],0,(0,0,255),2)
