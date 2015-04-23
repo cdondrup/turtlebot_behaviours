@@ -19,13 +19,10 @@ class PredatorSpotter(object):
         else:
             rospy.loginfo("The games are over. This counts!")
 
-        self.visualise = rospy.get_param("~visualise", True)
-        if self.visualise:
-            cv2.namedWindow("Image window", 1)
-            cv2.startWindowThread()
         self.dyn_srv = DynServer(SpotterConfig, self.dyn_callback)
         self.bridge = CvBridge()
         self.pub = rospy.Publisher("/predator_spotter/spotted", Bool, queue_size=10)
+        self.img_pub = rospy.Publisher("/predator_spotter/image", Image, queue_size=1)
         rospy.Subscriber(
             "/turtlebot_2/camera/rgb/image_raw" \
                 if self.simulator else \
@@ -34,7 +31,7 @@ class PredatorSpotter(object):
             self.callback,
             queue_size=1
         )
-        
+
     def dyn_callback(self, config, level):
         self.hue_low       = config["hue_low"]
         self.hue_high       = config["hue_high"]
@@ -83,9 +80,8 @@ class PredatorSpotter(object):
                 if aspect_ratio > 1.5 and cv2.contourArea(cnt) > 2000:
                     self.pub.publish(True)
                     print "RUN FORSET RUN!"
-
-        if self.visualise:
-            cv2.imshow("Image window", cv_image)
+        if self.img_pub.get_num_connections():
+            self.img_pub.publish(self.bridge.cv2_to_imgmsg(cv_image))
 
 
 if __name__ == '__main__':

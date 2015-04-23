@@ -84,7 +84,7 @@ class StateMachine(object):
                 transitions={
                     'reached': 'WAIT_AT_WAYPOINT',
                     'failed': 'CHOOSE_WAYPOINT',
-                    'spotted_predator': 'RUN_BITCH_RUN',
+                    'spotted_predator': 'RUN_FOREST_RUN',
                     'killall': 'preempted'
                 },
                 remapping={'waypoint' : 'waypoint'}
@@ -94,13 +94,13 @@ class StateMachine(object):
                 WaitAtWaypoint(self.simulator),
                 transitions={
                     'done': 'CHOOSE_WAYPOINT',
-                    'spotted_predator': 'RUN_BITCH_RUN',
+                    'spotted_predator': 'RUN_FOREST_RUN',
                     'killall': 'preempted'
                 },
                 remapping={'waypoint' : 'waypoint'}
             )
             smach.StateMachine.add(
-                'RUN_BITCH_RUN',
+                'RUN_FOREST_RUN',
                 RunBitchRun(self.simulator),
                 transitions={
                     'done': 'CHOOSE_WAYPOINT',
